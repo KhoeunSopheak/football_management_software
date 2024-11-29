@@ -1,34 +1,48 @@
 const Ticket = require('../model/ticketModel');
+const Match = require('../model/Matches');
 
 exports.bookTicket = async (req, res) => {
   try {
-    const { seatNumber, price } = req.body;
-    const { _id } = req.user; // Extract userId from the token
+    const { matchId, seatNumber, price } = req.body;
+    const { _id: userId } = req.user; 
 
-    // Create a new ticket
+    if (!matchId || !seatNumber || !price) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const match = await Match.findById(matchId);
+    if (!match) {
+      return res.status(404).json({ error: 'Match not found' });
+    }
+
+    const existingTicket = await Ticket.findOne({ matchId, seatNumber });
+    if (existingTicket) {
+      return res.status(409).json({ error: 'Seat is already booked for this match' });
+    }
+
     const ticket = await Ticket.create({
-      userId: _id,
+      matchId,
       seatNumber,
       price,
       status: 'booked',
+      created_by: userId,
     });
-
-    // Populate the userId field to include name and email
-    const populatedTicket = await Ticket.findById(ticket._id).populate('userId', 'username email');
+    const populatedTicket = await Ticket.findById(ticket._id).populate('created_by', 'username email');
 
     res.status(201).json({
       message: 'Ticket booked successfully',
       ticket: populatedTicket,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Get all tickets
+
 exports.getAllTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find(); // Fetch all tickets without filtering
+    const tickets = await Ticket.find(); 
     res.status(200).json({ success: true, tickets });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -36,9 +50,8 @@ exports.getAllTickets = async (req, res) => {
 };
 
 
-// Get a ticket by ID
 exports.getTicketById = async (req, res) => {
-  const { id } = req.params;
+  const id  = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, message: 'Invalid Ticket ID' });
@@ -51,21 +64,19 @@ exports.getTicketById = async (req, res) => {
     }
     res.status(200).json({ success: true, ticket });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: 'Internal Server error' });
   }
 };
 
-// update a ticket
 exports.updateTicket = async (req, res) => {
   try {
     const ticketId = req.params.id;
     const { seatNumber, price, status } = req.body;
 
-    // Find and update the ticket
     const updatedTicket = await Ticket.findByIdAndUpdate(
       ticketId,
-      { seatNumber, price, status }, // Include all fields to be updated
-      { new: true } // Return the updated document
+      { seatNumber, price, status },
+      { new: true }
     );
 
     if (!updatedTicket) {
@@ -77,23 +88,17 @@ exports.updateTicket = async (req, res) => {
       ticket: updatedTicket,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal Server error' });
   }
 };
 
-
-// Delete ticket controller
 exports.deleteTicket = async (req, res) => {
   try {
     const ticketId = req.params.id;
-
-    // Check if the ticket exists
     const ticket = await Ticket.findById(ticketId);
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket not found' });
     }
-
-    // Delete the ticket
     await Ticket.findByIdAndDelete(ticketId);
 
     res.status(200).json({

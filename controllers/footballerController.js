@@ -1,8 +1,8 @@
 const Footballer = require('../model/footballerModel'); 
 
-const createFootballer = async (req, res) => {
+const createFootballer = async (req, res) => {  //async request data response promisse
     try {
-        const { full_name, position, nationality, dob, bio, avatar, created_by } = req.body;
+        const { full_name, position, nationality, dob, bio, avatar} = req.body;
         const newFootballer = new Footballer({
             full_name,
             position,
@@ -10,18 +10,18 @@ const createFootballer = async (req, res) => {
             dob,
             bio,
             avatar,
-            created_by,
+            created_by: req.user?._id,
         });
 
-        if (!full_name || !position || !nationality || !dob || !created_by) {
+        if (!full_name || !position || !nationality || !dob) {
         return res.status(400).json({ error: "Missing required fields" });
         };
-        const existingFootballer = await Footballer.findOne(full_name);
+        const existingFootballer = await Footballer.findOne({ full_name });
         if (existingFootballer) {
             return res.status(409).json({ error: "Footballer already exists" });
         };
 
-        const saveFootballer = await newFootballer.save();
+        const saveFootballer = await newFootballer.save(); // await waiting data until data completed 
 
         return res.status(201).json({ 
             message: 'Create successfully', 
@@ -33,7 +33,7 @@ const createFootballer = async (req, res) => {
             dob,
             bio,
             avatar,
-            created_by, 
+            created_by: saveFootballer.created_by
             } 
         });
     } catch (error) {
@@ -67,7 +67,7 @@ const getFootballerId = async (req, res) => {
         );
     } catch (error) {
         console.error(error);
-        return res.status(5000).json({ error: 'Internal Server error'});
+        return res.status(500).json({ error: 'Internal Server error'});
     }
 };
 

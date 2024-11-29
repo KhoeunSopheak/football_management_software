@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
-const matchroute = require('./routes/matchRoute');
+const matchRoute = require('./routes/matchRoute');
 const authRoute = require('./routes/authRoute');
 const footballerroute = require('./routes/footballerRoute');
 const connectDB = require('./config/db');
@@ -17,9 +17,9 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 
-app.use("/api", matchroute);
-app.use("/api/auth", route);
-app.use('/api', ticketRouter);
+app.use("/api", matchRoute);
+app.use("/api/auth", authRoute);
+app.use('/api/book', ticketRouter);
 app.use("/api/soccer", footballerroute);
 app.use("/api/users", userRoute);
 app.listen(PORT, () => {

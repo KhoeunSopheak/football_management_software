@@ -34,7 +34,6 @@ const register = async (req, res) => {
       role
     });
 
-    // Save the new user to the database
     await newUser.save();
 
     return res.status(201).json({
@@ -76,8 +75,7 @@ const login = async (req, res) => {
       { expiresIn: "2h" }
     );
 
-    // Send the token as a response
-    res.status(200).json({ message: "User registered successfully", token });
+    res.status(200).json({ message: "User login successfully", token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

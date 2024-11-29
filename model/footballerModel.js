@@ -27,21 +27,13 @@ const footballerSchema = new mongoose.Schema({
   },
   created_by: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    required: null,
     ref: 'User',
   },
   updated_by: {
     type: mongoose.Schema.Types.ObjectId,
     default: null,
     ref: 'User',
-  },
-  created_at: {
-    type: Date,
-    default: Date.now, 
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now,
   },
 });
 

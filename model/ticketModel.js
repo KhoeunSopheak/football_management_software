@@ -6,12 +6,6 @@ const ticketSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Match', 
       required: true,
-
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Reference to User model
-      required: true,
     },
     seatNumber: {
       type: String,
@@ -24,7 +18,16 @@ const ticketSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ['booked', 'canceled', 'pending'],
-      default: 'booked',
+      default: 'pending',
+    },
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    updated_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: 'User',
     },
   },
   { timestamps: true }

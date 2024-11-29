@@ -1,13 +1,24 @@
 const mongoose = require("mongoose");
 
 const MatchSchema = new mongoose.Schema({
-    // id: {type: Number, required: true, unique: true,},
   homeTeam: { type: String, required: true },
   awayTeam: { type: String, required: true },
   date: { type: Date, required: true },
   location: { type: String, required: true },
-  score: { type: String, default: "0-0" },
-});
+  score: { type: String, require: null, default: null },
+  created_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    require: true,
+    ref: 'User',
+  },
+  updated_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
+    ref: 'User',
+  },
+},
+{ timestamps: true }
+);
 
 const Match = mongoose.model("Match", MatchSchema);
 

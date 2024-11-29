@@ -1,18 +1,19 @@
-const express = require("express");
+const express = require('express');
 const {
   createMatch,
   getMatches,
   getMatchById,
   updateMatch,
   deleteMatch,
-} = require("../controllers/matchesControllers");
+} = require('../controllers/matchesControllers');
+const verifyToken = require('../middleware/authMiddleware');
 
-const router = express.Router();
+const matchRoute = express.Router();
 
-router.post("/matches", createMatch); // Create a new match
-router.get("/allMatches", getMatches); // Get all matches
-router.get("/:id", getMatchById); // Get match by ID 
-router.put("/:id", updateMatch); // Update match by ID
-router.delete("/:id", deleteMatch); // Delete match by ID
+matchRoute.post('/match', verifyToken('admin'), createMatch);
+matchRoute.get('/matches', verifyToken('user', 'admin'), getMatches);
+matchRoute.get('/matches/:id', verifyToken('user', 'admin'), getMatchById); 
+matchRoute.put('/matches/:id', verifyToken('admin'), updateMatch); 
+matchRoute.delete('/matches/:id', verifyToken('admin'), deleteMatch);
 
-module.exports = router;
+module.exports = matchRoute;

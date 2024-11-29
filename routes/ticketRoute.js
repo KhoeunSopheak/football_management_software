@@ -10,19 +10,10 @@ const verifyToken = require("../middleware/authMiddleware");
 
 const ticketRouter = express.Router();
 
-// Route for booking a ticket
-ticketRouter.post('/ticket',verifyToken ("user"), bookTicket);
-
-// Route for getting all tickets
-ticketRouter.get('/tickets',verifyToken ("user", "admin"), getAllTickets);
-
-// Route for getting a ticket by ID
-ticketRouter.get('/tickets/:id',verifyToken ("user","admin"), getTicketById);
-
-// Route for update a ticket
-ticketRouter.put('/tickets/:id',verifyToken ("admin"), updateTicket);
-
-// Route for delete ticket
+ticketRouter.post('/booking',verifyToken ('user', 'admin'), bookTicket);
+ticketRouter.get('/tickets',verifyToken ('user', 'admin'), getAllTickets);
+ticketRouter.get('/tickets/:id',verifyToken ('user','admin'), getTicketById);
+ticketRouter.put('/tickets/:id',verifyToken ('admin'), updateTicket);
 ticketRouter.delete('/tickets/:id', verifyToken('admin'), deleteTicket);
 
 module.exports = ticketRouter;

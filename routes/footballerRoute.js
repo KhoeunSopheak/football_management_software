@@ -10,8 +10,8 @@ const verifyToken = require('../middleware/authMiddleware')
 const footballerroute = express.Router();
 
 footballerroute.post('/footballer', verifyToken('admin'), createFootballer);
-footballerroute.get('/footballers', getAllFootballer);
-footballerroute.get('/footballers/:id', getFootballerId);
+footballerroute.get('/footballers', verifyToken('user', 'admin'), getAllFootballer);
+footballerroute.get('/footballers/:id', verifyToken('user', 'admin'), getFootballerId);
 footballerroute.put('/footballers/:id', verifyToken('admin'), updateFootballer);
 footballerroute.delete('/footballers/:id', verifyToken('admin'), deleteFootballer);
 
