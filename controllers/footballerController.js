@@ -1,6 +1,6 @@
 const Footballer = require('../model/footballerModel'); 
 
-const createFootballer = async (req, res) => {  //async request data response promisse
+const createFootballer = async (req, res) => { 
     try {
         const { full_name, position, nationality, dob, bio, avatar} = req.body;
         const newFootballer = new Footballer({
@@ -21,7 +21,7 @@ const createFootballer = async (req, res) => {  //async request data response pr
             return res.status(409).json({ error: "Footballer already exists" });
         };
 
-        const saveFootballer = await newFootballer.save(); // await waiting data until data completed 
+        const saveFootballer = await newFootballer.save();
 
         return res.status(201).json({ 
             message: 'Create successfully', 

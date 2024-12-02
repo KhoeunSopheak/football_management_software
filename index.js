@@ -6,6 +6,7 @@ const authRoute = require('./routes/authRoute');
 const footballerroute = require('./routes/footballerRoute');
 const connectDB = require('./config/db');
 const ticketRouter = require('./routes/ticketRoute');
+const bookingTicketRouter = require('./routes/bookingRoute');
 const userRoute = require("./routes/userRoute")
 
 const app = express();
@@ -19,7 +20,8 @@ connectDB();
 
 app.use("/api", matchRoute);
 app.use("/api/auth", authRoute);
-app.use('/api/book', ticketRouter);
+app.use('/api/ticket', ticketRouter);
+app.use('/api/buy', bookingTicketRouter);
 app.use("/api/soccer", footballerroute);
 app.use("/api/users", userRoute);
 app.listen(PORT, () => {

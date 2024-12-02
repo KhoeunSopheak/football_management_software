@@ -1,6 +1,6 @@
 const express = require('express');
 const {
-  bookTicket,
+  createTicket,
   getAllTickets,
   getTicketById,
   updateTicket,
@@ -10,7 +10,7 @@ const verifyToken = require("../middleware/authMiddleware");
 
 const ticketRouter = express.Router();
 
-ticketRouter.post('/booking',verifyToken ('user', 'admin'), bookTicket);
+ticketRouter.post('/add-tickets/:match_id',verifyToken ('admin'), createTicket);
 ticketRouter.get('/tickets',verifyToken ('user', 'admin'), getAllTickets);
 ticketRouter.get('/tickets/:id',verifyToken ('user','admin'), getTicketById);
 ticketRouter.put('/tickets/:id',verifyToken ('admin'), updateTicket);

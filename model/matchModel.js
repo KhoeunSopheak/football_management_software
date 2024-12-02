@@ -5,7 +5,11 @@ const MatchSchema = new mongoose.Schema({
   awayTeam: { type: String, required: true },
   date: { type: Date, required: true },
   location: { type: String, required: true },
-  score: { type: String, require: null, default: null },
+  seats: {
+    type: Number,
+    required: true,
+    min:0
+  },
   created_by: {
     type: mongoose.Schema.Types.ObjectId,
     require: true,

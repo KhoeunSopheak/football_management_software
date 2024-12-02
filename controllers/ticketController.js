@@ -1,41 +1,33 @@
+const mongoose = require('mongoose');
 const Ticket = require('../model/ticketModel');
-const Match = require('../model/Matches');
+const Match = require('../model/matchModel');
 
-exports.bookTicket = async (req, res) => {
+
+exports.createTicket = async (req, res) => {
   try {
-    const { matchId, seatNumber, price } = req.body;
-    const { _id: userId } = req.user; 
-
-    if (!matchId || !seatNumber || !price) {
+    const { price } = req.body;
+    const { match_id } = req.params;
+    const created_by = req.user?._id; 
+    if (!match_id || !price) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
-
-    const match = await Match.findById(matchId);
+    const match = await Match.findById(match_id);
     if (!match) {
       return res.status(404).json({ error: 'Match not found' });
     }
-
-    const existingTicket = await Ticket.findOne({ matchId, seatNumber });
-    if (existingTicket) {
-      return res.status(409).json({ error: 'Seat is already booked for this match' });
-    }
-
     const ticket = await Ticket.create({
-      matchId,
-      seatNumber,
+      match_id,
       price,
-      status: 'booked',
-      created_by: userId,
+      created_by,
     });
-    const populatedTicket = await Ticket.findById(ticket._id).populate('created_by', 'username email');
 
     res.status(201).json({
-      message: 'Ticket booked successfully',
-      ticket: populatedTicket,
+      message: 'Ticket created successfully',
+      ticket,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -51,14 +43,12 @@ exports.getAllTickets = async (req, res) => {
 
 
 exports.getTicketById = async (req, res) => {
-  const id  = req.params.id;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const ticketId  = req.params.id;
+  if (!mongoose.Types.ObjectId.isValid(ticketId)) {
     return res.status(400).json({ success: false, message: 'Invalid Ticket ID' });
   }
-
   try {
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findById(ticketId);
     if (!ticket) {
       return res.status(404).json({ success: false, message: 'Ticket not found' });
     }

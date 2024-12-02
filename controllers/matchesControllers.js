@@ -1,18 +1,18 @@
-const Match = require("../model/Matches");
+const Match = require("../model/matchModel");
 
 const createMatch = async (req, res) => {
   try {
-    const {homeTeam, awayTeam, date, location, score} = req.body;
+    const {homeTeam, awayTeam, date, location, seats} = req.body;
     const newMatch =  new Match({
       homeTeam,
       awayTeam,
       date,
       location,
-      score,
+      seats,
       created_by: req.user?._id,
     });
 
-    if (!homeTeam || !awayTeam || !date || !location) {
+    if (!homeTeam || !awayTeam || !date || !location || !seats) {
       return res.status(400).json({ error: "Missing required fields" });
       };
 
@@ -25,7 +25,7 @@ const createMatch = async (req, res) => {
         awayTeam,
         date,
         location,
-        score,
+        seats,
         created_by: saveMatch.created_by
        }});
   } catch (error) {
